@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test-Drucker</title>
+</head>
+<body>
+    <h1>Drucker Testseite</h1>
+    <button onclick="printDocument('KundenDruck.pdf', 'Tray2')">Kunden-Dokument drucken</button>
+    <button onclick="printDocument('FirmaDruck.pdf', 'Tray1')">Firmen-Dokument drucken</button>
+
+    <script>
+        function printDocument(fileName, tray) {
+            fetch('http://192.168.200.14:3000/print', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    pdfPath: fileName,
+                    paperTray: tray
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Fehler:', error));
+        }
+    </script>
+</body>
+</html>
