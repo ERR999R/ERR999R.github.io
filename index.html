@@ -7,22 +7,33 @@
 </head>
 <body>
     <h1>Drucker Testseite</h1>
-    <button onclick="printDocument('KundenDruck.pdf', 'PF430B')">Kunden-Dokument drucken (Tray2 PF430B)</button>
-    <button onclick="printDocument('FirmaDruck.pdf', 'PF430A')">Firmen-Dokument drucken (Tray2 PF430A)</button>
+    <button onclick="printDocument('GitHubPagesKunde.pdf', 'PF430B')">Kunden-Dokument drucken (Tray2 PF430B)</button>
+    <button onclick="printDocument('GitHubPagesFirma.pdf', 'PF430A')">Firmen-Dokument drucken (Tray2 PF430A)</button>
 
     <script>
-        function printDocument(fileName, tray) {
-            fetch('https://192.168.200.14:3000/print', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    pdfPath: fileName,
-                    paperTray: tray
-                })
-            })
-            .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Fehler:', error));
+        async function printDocument(fileName, tray) {
+            // GitHub Pages URL zur Datei
+            const fileUrl = `https://err999r.github.io/data/${fileName}`;
+    
+            try {
+                const response = await fetch(fileUrl);
+                const blob = await response.blob();
+                const file = new File([blob], fileName, { type: blob.type });
+    
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('tray', tray);
+    
+                const res = await fetch('https://192.168.200.14:3000/print', {
+                    method: 'POST',
+                    body: formData
+                });
+    
+                const result = await res.json();
+                console.log(result);
+            } catch (error) {
+                console.error('Fehler:', error);
+            }
         }
     </script>
 </body>
